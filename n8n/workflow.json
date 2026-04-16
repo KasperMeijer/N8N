@@ -3,51 +3,44 @@
   "nodes": [
     {
       "parameters": {
-        "httpMethod": "POST",
         "path": "citizen-request",
+        "httpMethod": "POST",
         "responseMode": "responseNode",
         "options": {}
       },
-      "id": "webhook-1",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [
-        240,
-        300
-      ]
+      "position": [240, 300],
+      "id": "webhook-node-id"
     },
     {
       "parameters": {
+        "url": "http://api:8000/submit-request",
         "method": "POST",
-        "url": "http://localhost:8000/submit-request",
         "sendBody": true,
         "bodyContentType": "json",
         "specifyBody": "json",
         "jsonBody": "={{ $json }}",
         "options": {}
       },
-      "id": "http-request-1",
       "name": "HTTP Request",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
-      "position": [
-        460,
-        300
-      ]
+      "position": [460, 300],
+      "id": "http-request-node-id"
     },
     {
       "parameters": {
-        "functionCode": "console.log('API Response:', $node[\"HTTP Request\"].json);\nreturn $node[\"HTTP Request\"].json;"
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
       },
-      "id": "function-1",
-      "name": "Log Response",
-      "type": "n8n-nodes-base.function",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [
-        680,
-        300
-      ]
+      "position": [680, 300],
+      "id": "respond-node-id"
     }
   ],
   "connections": {
@@ -66,7 +59,7 @@
       "main": [
         [
           {
-            "node": "Log Response",
+            "node": "Respond to Webhook",
             "type": "main",
             "index": 0
           }
@@ -78,8 +71,7 @@
   "settings": {},
   "staticData": null,
   "meta": {
-    "instanceId": "instance-id-here"
+    "instanceId": "n8n-instance-id"
   },
-  "id": "workflow-id-here",
-  "tags": []
+  "id": "workflow-id"
 }

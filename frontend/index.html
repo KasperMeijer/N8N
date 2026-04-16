@@ -49,7 +49,7 @@
             };
 
             try {
-                const response = await fetch('http://localhost:5678/webhook/citizen-request', {
+                const response = await fetch('http://localhost:5678/webhook-test/citizen-request', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
