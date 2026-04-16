@@ -21,7 +21,7 @@
         "sendBody": true,
         "bodyContentType": "json",
         "specifyBody": "json",
-        "jsonBody": "={{ $json }}",
+        "jsonBody": "={{ $json.body }}",
         "options": {}
       },
       "name": "HTTP Request",
