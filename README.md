@@ -13,6 +13,7 @@ Dit project implementeert een end-to-end oplossing voor het verwerken van burger
 
 - **n8n**: Workflow automation (http://localhost:5678)
 - **API**: FastAPI backend (http://localhost:8000)
+- **Frontend**: Simpel HTML form (http://localhost:8080)
 - **Audit DB**: PostgreSQL voor logs (localhost:5433)
 - **N8N DB**: PostgreSQL voor n8n (localhost:5432)
 
@@ -33,11 +34,11 @@ curl http://localhost:8000/docs
 docker-compose down
 ```
 
-## API Endpoints
+## Frontend
+Open http://localhost:8080 voor het formulier. Het stuurt requests naar de n8n webhook, die de API aanroept.
 
-- `POST /submit-request`: Hoofdentpoint voor aanvragen
-- `GET /audit-logs`: Audit logs bekijken
-- Andere endpoints voor componenten
+## N8N Workflow
+De n8n workflow orkestreert: Webhook → API call → Response.
 
 ## Workflow
 

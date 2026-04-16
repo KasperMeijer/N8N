@@ -55,6 +55,17 @@ services:
     networks:
       - n8n_network
 
+  # Frontend service
+  frontend:
+    image: nginx:alpine
+    container_name: frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    networks:
+      - n8n_network
+
   # n8n workflow automation
   n8n:
     image: n8nio/n8n:latest
@@ -72,6 +83,10 @@ services:
       - N8N_PROTOCOL=http
       - NODE_ENV=production
       - WEBHOOK_URL=http://localhost:5678/
+      - N8N_CORS_ALLOW_ORIGINS=*
+      - N8N_CORS_ENABLED=true
+      - N8N_CORS_ORIGINS=*
+      - N8N_CORS_METHODS=GET,POST,OPTIONS
     ports:
       - "5678:5678"
     volumes:

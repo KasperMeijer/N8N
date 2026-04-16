@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, Boolean
 from sqlalchemy.ext.declarative import declarative_base
@@ -10,6 +11,15 @@ import httpx
 import os
 
 app = FastAPI()
+
+# Enable CORS for all origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Database setup
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://audit:audit_password@audit_db:5432/audit_db")
