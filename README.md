@@ -1,23 +1,70 @@
-# N8N Docker Setup
+# Prototype: AI-gedreven Aanvraagverwerking
 
-Dit project bevat een volledige Docker Compose setup voor n8n met een FastAPI backend.
+Dit project implementeert een end-to-end oplossing voor het verwerken van burgeraanvragen met AI-ondersteuning, fairness-checks en audit-logging.
+
+## Architectuur
+
+- **n8n**: Workflow-orkestratie voor aanvraagflow.
+- **FastAPI API**: Backend voor validatie, pseudonimisering, beleid, AI, fairness-check.
+- **PostgreSQL**: Audit-database voor logging.
+- **Docker Compose**: Complete setup.
 
 ## Services
 
-- **n8n**: Workflow automation platform (http://localhost:5678)
-- **FastAPI API**: Backend service (http://localhost:8000)
-- **PostgreSQL**: Database voor n8n
+- **n8n**: Workflow automation (http://localhost:5678)
+- **API**: FastAPI backend (http://localhost:8000)
+- **Audit DB**: PostgreSQL voor logs (localhost:5433)
+- **N8N DB**: PostgreSQL voor n8n (localhost:5432)
 
-## Starten
+## Installatie
 
 ```bash
+# Clone repo
+git clone <repo>
+cd N8N
+
 # Start alle services
-docker-compose up -d
+docker-compose up --build -d
+
+# API health check
+curl http://localhost:8000/docs
 
 # Stop services
 docker-compose down
+```
 
-# Logs bekijken
+## API Endpoints
+
+- `POST /submit-request`: Hoofdentpoint voor aanvragen
+- `GET /audit-logs`: Audit logs bekijken
+- Andere endpoints voor componenten
+
+## Workflow
+
+1. Aanvraag ontvangen via webhook/API
+2. Validatie en data minimalisatie
+3. Pseudonimisering (citizenId → token)
+4. Beleid ophalen
+5. AI-service aanroepen voor voorstel
+6. Fairness-check
+7. Beslissing: auto/manual/rejected
+8. Transparant bericht aan burger
+9. Audit logging
+
+## Testcases
+
+- Laag risico: Neutrale aanvraag → auto bericht
+- Hoog risico: Ernst=hoog + complex → manual review
+- Fairness: Verboden term → flag + review
+- Validatie: consentAI=false → error
+
+## BPMN Diagram
+
+(Beschrijving: Start → Validatie → Pseudonimisering → Beleid → AI → Fairness → Beslissing → Bericht → Log → End)
+
+## Prompt Charter
+
+Zie `docs/prompt_charter.md` voor AI-regels.
 docker-compose logs -f n8n
 docker-compose logs -f api
 ```

@@ -21,6 +21,40 @@ services:
     networks:
       - n8n_network
 
+  # PostgreSQL database for audit
+  audit_db:
+    image: postgres:15-alpine
+    container_name: audit_postgres
+    environment:
+      POSTGRES_USER: audit
+      POSTGRES_PASSWORD: audit_password
+      POSTGRES_DB: audit_db
+    volumes:
+      - audit_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U audit"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - n8n_network
+
+  # API service
+  api:
+    build: ./api
+    container_name: prototype_api
+    environment:
+      - DATABASE_URL=postgresql://audit:audit_password@audit_db:5432/audit_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      audit_db:
+        condition: service_healthy
+    networks:
+      - n8n_network
+
   # n8n workflow automation
   n8n:
     image: n8nio/n8n:latest
@@ -49,27 +83,10 @@ services:
     networks:
       - n8n_network
 
-  # FastAPI backend
-  api:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-    container_name: fastapi_backend
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    environment:
-      - ENVIRONMENT=production
-    volumes:
-      - ./api:/app
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-    networks:
-      - n8n_network
-
 volumes:
   postgres_data:
+  audit_data:
   n8n_data:
 
 networks:
   n8n_network:
-    driver: bridge
